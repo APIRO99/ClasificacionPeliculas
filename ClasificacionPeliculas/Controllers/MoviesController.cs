@@ -28,20 +28,11 @@ namespace ClasificacionPeliculas.Controllers
         }
 
         // GET: Movies/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.Movies == null)
-            {
-                return NotFound();
-            }
-
-            var movie = await _context.Movies
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (movie == null)
-            {
-                return NotFound();
-            }
-
+            if (_context.Movies == null) return NotFound();
+            var movie = getMoviesWithVotes(id);
+            if (movie == null)return NotFound();
             return View(movie);
         }
 
@@ -56,7 +47,7 @@ namespace ClasificacionPeliculas.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ReleaseDate,Duration,Director,Actors,Plot,Rating,Votes,PosterUrl,ImdbId")] ClasificacionPeliculasModel.Movie movie)
+        public async Task<IActionResult> Create([Bind("Id,Title,ReleaseDate,Duration,Director,Actors,Plot,Rating,Votes,PosterUrl,ImdbId")] Models.Movie movie)
         {
             if (ModelState.IsValid)
             {
@@ -119,20 +110,11 @@ namespace ClasificacionPeliculas.Controllers
         }
 
         // GET: Movies/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int id)
         {
-            if (id == null || _context.Movies == null)
-            {
-                return NotFound();
-            }
-
-            var movie = await _context.Movies
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (movie == null)
-            {
-                return NotFound();
-            }
-
+            if ( _context.Movies == null) return NotFound();
+            var movie = getMoviesWithVotes(id);
+            if (movie == null) return NotFound();
             return View(movie);
         }
 
@@ -180,6 +162,34 @@ namespace ClasificacionPeliculas.Controllers
             var jsonresult = new { movie = movie };
 
             return Json(jsonresult);
+        }
+
+
+
+
+        // Helpers 
+        private Models.Movie getMoviesWithVotes(int id) {
+            Models.Movie movie = (
+                from m in _context.Movies
+                where m.Id == id
+                select new Models.Movie {
+                    Id = m.Id,
+                    Title = m.Title,
+                    ReleaseDate = m.ReleaseDate,
+                    Duration = m.Duration,
+                    Director = m.Director,
+                    Actors = m.Actors,
+                    Plot = m.Plot,
+                    Rating = m.Rating,
+                    Votes = m.Votes,
+                    PosterUrl = m.PosterUrl,
+                    ImdbId = m.ImdbId
+                } 
+            ).First();
+            movie.VotesNavigation = _context.Votes.Where(vt => vt.MoviesId == movie.Id).Select(x => x).ToList();
+            movie.Votes = movie.VotesNavigation.Count();
+            movie.Rating = (movie.Votes > 0) ? (decimal)movie.VotesNavigation.Select(x => x.Rate).Average() : 0;
+            return movie;
         }
     }
 }

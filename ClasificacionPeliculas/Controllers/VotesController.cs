@@ -47,10 +47,11 @@ namespace ClasificacionPeliculas.Controllers
     // GET: Vote/Create
     public IActionResult Create()
     {
-      List<Region> regions = GetRegions();
-      List<City> cities = (List<City>)GetCitiesFromRegion(regions[0].Geonameid).Value;
-      ViewBag.persons = new SelectList(regions, "Geonameid", "Name", regions.Select(s => s.Geonameid).FirstOrDefault());
-      ViewBag.movies= new SelectList(cities, "Geonameid", "Name", cities.Select(s => s.Geonameid).FirstOrDefault());
+      List<PersonalInformation> persons = GetPersons();
+      ViewBag.persons = new SelectList(persons, "Id", "Name", persons.Select(s => s.Id).FirstOrDefault());
+      
+      List<Movie> cities = (List<Movie>)GetUnvotedMovies(persons[0].Id).Value;
+      ViewBag.movies= new SelectList(cities, "Id", "Title", cities.Select(s => s.Id).FirstOrDefault());
       return View();
     }
 
@@ -60,10 +61,11 @@ namespace ClasificacionPeliculas.Controllers
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Name,DateOfBirth,Email,PhoneNumber,Address,GeonameidCity")] Vote Vote)
+    public async Task<IActionResult> Create([Bind("PiId,MoviesId,Rate")] Vote Vote)
     {
       if (ModelState.IsValid)
       {
+        Vote.RowCreationTime = DateTime.Now;
         _context.Add(Vote);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
@@ -72,27 +74,28 @@ namespace ClasificacionPeliculas.Controllers
     }
 
     // GET: Vote/Edit/5
-    // public IActionResult Edit(int? id)
-    // {
-    //   if (id == null || _context.Votes == null) return NotFound();
-    //   var votes = GetVoteWithCity(id);
-    //   if (votes == null) return NotFound();
+    public IActionResult Edit(int? id)
+    {
+      if (id == null || _context.Votes == null) return NotFound();
+      var vote = GetVoteWithPIAndMovie(id);
+      if (vote == null) return NotFound();
 
-    //   List<Region> regions = GetRegions();
-    //   SelectList regionsList = new SelectList(regions, "Geonameid", "Name", regions.Select(s => s.Geonameid).FirstOrDefault());
-    //   regionsList.Where(x => x.Value == votes.GeonameidCityNavigation.GeonameidRegion.ToString()).First().Selected = true;
-    //   ViewBag.regions = regionsList;
-      
-    //   List<City> cities = (List<City>)GetCitiesFromRegion(votes.GeonameidCityNavigation.GeonameidRegion).Value;
-    //   ViewBag.cities = new SelectList(cities, "Geonameid", "Name", cities.Select(s => s.Geonameid).FirstOrDefault());
+      List<PersonalInformation> persons = GetPersons();
+      SelectList personsList = new SelectList(persons, "Id", "Name", persons.Select(s => s.Id).FirstOrDefault());
+      personsList.Where(x => x.Value == vote.PiId.ToString()).First().Selected = true;
+      ViewBag.persons = personsList;
 
-    //   return View(votes);
-    // }
+      List<Movie> movies = (List<Movie>)GetUnvotedMovies(vote.Pi.Id).Value;
+      movies.Insert(0, vote.Movies);
+      ViewBag.movies= new SelectList(movies, "Id", "Title", movies.Select(s => s.Id).FirstOrDefault());
+
+      return View(vote);
+    }
 
     // POST: Vote/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DateOfBirth,Email,PhoneNumber,Address,GeonameidCity")] Vote Vote)
+    public async Task<IActionResult> Edit(int id, [Bind("Id,PiId,MoviesId,Rate,RowCreationTime")] Vote Vote)
     {
       if (id != Vote.Id) return NotFound();
       if (!ModelState.IsValid) View(Vote);
@@ -137,14 +140,16 @@ namespace ClasificacionPeliculas.Controllers
       return (_context.Votes?.Any(e => e.Id == id)).GetValueOrDefault();
     }
 
-    private List<Region> GetRegions()
+
+
+    private List<PersonalInformation> GetPersons()
     {
       return (
-        from r in _context.Regions
-        select new Region
+        from p in _context.PersonalInformations
+        select new PersonalInformation
         {
-          Geonameid = r.Geonameid,
-          Name = r.Name
+          Id = p.Id,
+          Name = p.Name
         }
       )
       .OrderBy(r => r.Name)
@@ -173,20 +178,21 @@ namespace ClasificacionPeliculas.Controllers
 
     // AUX ------------------------------------------------------------------------
 
-    public JsonResult GetCitiesFromRegion(long regionID)
+    public JsonResult GetUnvotedMovies(long personID)
     {
-      List<City> cities = (
-        from c in _context.Cities
-        where c.GeonameidRegion == regionID
-        select new City
-        {
-          Geonameid = c.Geonameid,
-          Name = c.Name
+      var votedMovies = _context.Votes.Where(x => x.PiId == personID).Select(x => x.MoviesId).ToArray();
+
+      List<Movie> unvotedMovies = (
+        from m in _context.Movies
+        where !votedMovies.Contains(m.Id)
+        select new Movie {
+          Id = m.Id,
+          Title = m.Title
         }
       )
-      .OrderBy(r => r.Name)
+      .OrderBy(r => r.Title)
       .ToList();
-      return Json(cities);
+      return Json(unvotedMovies);
     }
   }
 }

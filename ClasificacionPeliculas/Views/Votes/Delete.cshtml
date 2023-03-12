@@ -1,4 +1,4 @@
-﻿@model ClasificacionPeliculas.Models.PersonalInformation
+﻿@model ClasificacionPeliculas.Models.Vote
 
 @{
     ViewData["Title"] = "Eliminar película";
@@ -12,47 +12,35 @@
                     <p class="text-danger">¿Seguro que desea eliminar la película?</p>
                     <dl class="row">
                         <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => model.Name)
+                            @Html.DisplayNameFor(model => model.Pi.Name)
                         </dt>
                         <dd class="col-sm-10">
-                            @Html.DisplayFor(model => model.Name)
+                            @Html.DisplayFor(model => model.Pi.Name)
                         </dd>
                         <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => model.DateOfBirth)
+                            @Html.DisplayNameFor(model => model.Movies.Title)
                         </dt>
                         <dd class="col-sm-10">
-                            @Html.DisplayFor(model => model.DateOfBirth)
+                            @Html.DisplayFor(model => model.Movies.Title)
                         </dd>
                         <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => model.Email)
+                            @Html.DisplayNameFor(model => model.Rate)
                         </dt>
                         <dd class="col-sm-10">
-                            @Html.DisplayFor(model => model.Email)
+                            @Html.DisplayFor(model => model.Rate)
                         </dd>
                         <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => model.PhoneNumber)
+                            @Html.DisplayNameFor(model => model.RowCreationTime)
                         </dt>
                         <dd class="col-sm-10">
-                            @Html.DisplayFor(model => model.PhoneNumber)
-                        </dd>
-                        <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => model.Address)
-                        </dt>
-                        <dd class="col-sm-10">
-                            @Html.DisplayFor(model => model.Address)
-                        </dd>
-                        <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => model.GeonameidCity)
-                        </dt>
-                        <dd class="col-sm-10">
-                            @Html.DisplayFor(model => model.GeonameidCityNavigation.Name)
+                            @Html.DisplayFor(model => model.RowCreationTime)
                         </dd>
                     </dl>
                 </div>
                 <div class="card-footer">
                     <form asp-action="Delete">
                         <input type="hidden" asp-for="Id" />
-                        <input type="submit" value="Eliminar" class="btn btn-danger" /> 
+                        <input type="submit" value="Eliminar" class="btn btn-danger" />
                         <a asp-action="Index" class="btn btn-danger">Regresar</a>
                     </form>
                 </div>

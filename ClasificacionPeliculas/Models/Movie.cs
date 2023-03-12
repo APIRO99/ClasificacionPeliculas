@@ -29,5 +29,5 @@ public partial class Movie
 
     public virtual ICollection<Moviescategory> Moviescategories { get; } = new List<Moviescategory>();
 
-    public virtual ICollection<Vote> VotesNavigation { get; } = new List<Vote>();
+    public virtual ICollection<Vote> VotesNavigation { get; set; } = new List<Vote>();
 }
