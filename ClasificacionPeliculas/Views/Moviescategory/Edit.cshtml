@@ -1,0 +1,35 @@
+﻿@model ClasificacionPeliculasModel.Moviescategory
+
+@{
+    ViewData["Title"] = "Editar categoría película";
+}
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <form asp-action="Edit">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="card-header">@ViewData["Title"]</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                <label asp-for="MovieId" class="control-label"></label>
+                                <select asp-for="MovieId" asp-items="@ViewBag.Movies" class="form-control"></select>
+                                <span asp-validation-for="MovieId" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                <label asp-for="CategoryId" class="control-label"></label>
+                                <select asp-for="CategoryId" asp-items="@Model.Categories" class="form-control"></select>
+                                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-footer">
+                        <input type="submit" value="Grabar" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

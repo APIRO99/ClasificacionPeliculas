@@ -1,0 +1,70 @@
+﻿@model ClasificacionPeliculasModel.Moviescategory
+
+@{
+    ViewData["Title"] = "Crear categoría película";
+}
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <form asp-action="Create">
+                    <div class="card-header">@ViewData["Title"]</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                <label asp-for="MovieId" class="control-label"></label>
+                                <select asp-for="MovieId" asp-items="@Model.Movies" class="form-control" onchange="MovieChanged('@Url.Action("GetMovieJson", "Movies")');"></select>
+                                <span asp-validation-for="MovieId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.Movie.ReleaseDate)
+                            </dt>
+                            <dd class="col-sm-10">
+                                <input asp-for="Movie.ReleaseDate" class="form-control" readonly />
+                            </dd>
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.Movie.Duration)
+                            </dt>
+                            <dd class="col-sm-10">
+                                <input asp-for="Movie.Duration" class="form-control" readonly />
+                            </dd>
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.Movie.Director)
+                            </dt>
+                            <dd class="col-sm-10">
+                                <input asp-for="Movie.Director" class="form-control" readonly />
+                            </dd>
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.Movie.Actors)
+                            </dt>
+                            <dd class="col-sm-10">
+                                <input asp-for="Movie.Actors" class="form-control" readonly />
+                            </dd>
+
+                        </dl>
+
+
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6 col-sm-12">
+                                <label asp-for="CategoryId" class="control-label"></label>
+                                <select asp-for="CategoryId" asp-items="@Model.Categories" class="form-control"></select>
+                                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-footer">
+                        <input type="submit" value="Crear" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script src="~/js/moviescategories.js"></script>
+   
+}

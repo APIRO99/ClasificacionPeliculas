@@ -1,0 +1,19 @@
+version: '3.3'
+services:
+  movies:
+    image: mysql
+    # restart: always
+    environment:
+      MYSQL_DATABASE: 'movies'
+      MYSQL_USER: 'Peliculas'
+      MYSQL_PASSWORD: 'jskadhf;oiaseufpoaiwsf@'
+      MYSQL_ROOT_PASSWORD: 'qwfeasdfgawfwef'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - mySQLMovies:/var/lib/mysql
+
+volumes:
+  mySQLMovies:

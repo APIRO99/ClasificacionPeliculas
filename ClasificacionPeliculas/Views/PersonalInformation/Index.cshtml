@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ClasificacionPeliculas.Models.PersonalInformation>
+
+@{
+    ViewData["Title"] = "Informacion Personal";
+}
+
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">@ViewData["Title"]</div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                                <th>@Html.DisplayNameFor(model => model.DateOfBirth)</th>
+                                <th>@Html.DisplayNameFor(model => model.Email)</th>
+                                <th>@Html.DisplayNameFor(model => model.PhoneNumber)</th>
+                                <th>@Html.DisplayNameFor(model => model.Address)</th>
+                                <th>@Html.DisplayNameFor(model => model.GeonameidCity)</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.DateOfBirth)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.GeonameidCityNavigation.Name)</td>
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                                        <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
+                                        <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="card-footer">
+                        <a asp-action="Create" class="btn btn-primary">Crear</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

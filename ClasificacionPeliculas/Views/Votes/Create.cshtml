@@ -1,0 +1,85 @@
+﻿@model ClasificacionPeliculas.Models.PersonalInformation
+
+@{
+    ViewData["Title"] = "Crear Película";
+}
+
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <form asp-action="Create">
+                    <div class="card-header">@ViewData["Title"]</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label asp-for="Name" class="control-label"></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label asp-for="DateOfBirth" class="control-label"></label>
+                                    <input asp-for="DateOfBirth" type="date" class="form-control" />
+                                    <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label asp-for="Email" class="control-label"></label>
+                                    <input asp-for="Email" class="form-control" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label asp-for="PhoneNumber" class="control-label"></label>
+                                    <input asp-for="PhoneNumber" class="form-control" />
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label asp-for="Address" class="control-label"></label>
+                                    <input asp-for="Address" class="form-control" />
+                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <br /><br /><br />
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label class="control-label">Region</label>
+                                    <select id="regions" class="form-select" asp-items="ViewBag.regions" onchange="handleChange(event)"></select>
+                                </div>
+                                <div class="col-md-6 col-lg-6 col-sm-12">
+                                    <label class="control-label">Ciudad</label>
+                                    <select asp-for="GeonameidCity" id="cities" class="form-select"
+                                        asp-items="ViewBag.cities"></select>
+                                    <span asp-validation-for="GeonameidCity" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <input type="submit" value="Crear" class="btn btn-primary" /> <a asp-action="Index"
+                            class="btn btn-danger">Regresar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <script>
+            async function handleChange({target}) {
+                let regionID = target.value;
+                var response = await fetch("http://localhost:5224/PersonalInformation/GetCitiesFromRegion?regionID=" + regionID);
+                var cities = await response.json();
+                var opts = cities.reduce(( acc, next ) => acc + `,<option value=${next.geonameid}>${next.name}</option>`, `<option value='' selected>Select from List...</option>`);
+                document.getElementById("cities").innerHTML = opts;
+            }
+        </script>
+    }
+}
